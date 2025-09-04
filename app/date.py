@@ -1,3 +1,6 @@
 from datetime import datetime
 
-now = datetime.now()
+
+def now_day() -> int:
+    return datetime.now().day
+

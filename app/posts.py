@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException
 from app.data import all_data
 from app.base import DataRequest
-
+from app.date import now_day
 
 router = APIRouter(prefix="/date")
 
@@ -12,7 +12,9 @@ async def free_month():
 
     free_list = [key for key, value in all_data.items() if value]
 
-    return {"message": f"{str(free_list)} is free"}
+    free_list = [f"[{now_day()}]" if key == now_day() else key for key in free_list]
+
+    return {"message": f"{free_list} is free"}
 
 
 @router.put("/get_date")
@@ -33,7 +35,7 @@ async def get_date(request: DataRequest):
 async def cancel_date(request: DataRequest):
     date = request.date
 
-    if date > 31:
+    if date > 31 or date <= 0:
         raise HTTPException(status_code=404, detail="date not found")
 
     if all_data[date]:
