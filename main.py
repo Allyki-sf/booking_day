@@ -1,13 +1,22 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 import uvicorn
+from core.init_db import init_db
 
-from app import posts
-
-
-app = FastAPI()
+from app import views
 
 
-app.include_router(posts.router)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
+
+app.include_router(views.router)
 
 
 @app.get("/")
@@ -16,17 +25,6 @@ async def root():
 
 
 
-# class Hotel:
-#     def __init__(self, first_date, last_date):
-#         self.first_date = first_date
-#         self.last_date = last_date
-
-
-# class Rooms:
-#     def __init__(self, number, first_date, last_date):
-#         self.number = number
-#         self.first_date = first_date
-#         self.last_date = last_date
 
 
 
