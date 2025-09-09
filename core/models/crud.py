@@ -40,3 +40,20 @@ async def take_free_day(
     await session.commit()
     return {"message": f"Day {day} successfully booked"}
 
+
+async def cancel_booking(
+        session: AsyncSession,
+        day: int,
+):
+    stmt = select(Month).where(Month.day == day, Month.status == "Booked")
+    result = await session.execute(stmt)
+    booking_day = result.scalars().first()
+
+    if not booking_day:
+        raise HTTPException(status_code=400, detail="Day is already free or does not exist")
+
+    booking_day.status = "Free"
+
+    await session.commit()
+    return {"message": f"Day {day} successfully cancelled"}
+

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, text
 from core.models import Base, Month, db_helper
 from app.time_helper import days_in_month
 
