@@ -29,6 +29,6 @@ class DatabaseHelper:
 
 
 db_helper = DatabaseHelper(
-    url=settings.db_url,
-    echo=settings.db_echo,
+    url=settings.db_run.db_url,
+    echo=settings.db_run.db_echo,
 )
