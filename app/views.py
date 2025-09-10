@@ -1,13 +1,12 @@
 
-from fastapi import APIRouter, Path
+from fastapi import APIRouter
 from fastapi.params import Depends
 from fastapi.responses import HTMLResponse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from typing import Annotated
-
-from app.time_helper import year, month_name, days_in_month
+from app.schemas import DataRequest
+from app.time_helper import year, month_name
 from core.models import crud, db_helper
 
 
@@ -36,24 +35,24 @@ async def free_month(
     return f"<html><body><h2>{month_name} {year}</h2>{html}</body></html>"
 
 
-@router.get("/booked_day/{day}")
+@router.post("/booked_day/{day}")
 async def booking_day(
-        day: Annotated[int, Path(ge=1, lt=days_in_month+1)],
+        data: DataRequest,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     return await crud.take_free_day(
         session=session,
-        day=day,
+        day=data.day,
     )
 
 
-@router.get("/cancel_booking/{day}")
+@router.delete("/cancel_booking/{day}")
 async def cancel_booking_day(
-        day: Annotated[int, Path(ge=1, lt=days_in_month+1)],
+        data: DataRequest,
         session: AsyncSession = Depends(db_helper.session_dependency),
 ):
     return await crud.cancel_booking(
         session=session,
-        day=day,
+        day=data.day,
     )
 
